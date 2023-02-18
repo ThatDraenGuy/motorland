@@ -1,3 +1,3 @@
-# projects
+# MotorLand
 
-Projects of Embedded Systems course (Spring 2023)
+Project for Embedded Systems course (Spring 2023)
