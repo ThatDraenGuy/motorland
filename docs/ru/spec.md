@@ -9,10 +9,10 @@
 - Создание унифицированного API для различных моделей камер
 
 2. Команда исполнителей
-- Баранов Вячеслав
-- Миху Вадим
-- Соловьёв Павел
-- Хайкин Олег
+- Баранов Вячеслав - [algoritmist](https://github.com/algoritmist)
+- Миху Вадим - [filberol](https://github.com/filberol)
+- Соловьёв Павел - [Moleus](https://github.com/Moleus)
+- Хайкин Олег - [Draen](https://github.com/ThatDraenGuy)
 
 ## Технические требования
 
