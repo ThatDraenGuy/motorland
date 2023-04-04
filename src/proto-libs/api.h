@@ -70,7 +70,8 @@ void motor_set_min_softlimit(MotorAttributes* attributes, int min_steps);
 void motor_set_max_softlimit(MotorAttributes* attributes, int max_steps);
 
 /* inverts default rotation direction */
-void motor_invert_direction(MotorAttributes* attributes, bool invert);
+void motor_set_axis_inversion(MotorAttributes* attributes, bool invert);
+
 
 /* TODO: decide how the upper layer can get the info about motor state. Is this method sutable here? */
 // MotorStatus get_current_status(MotorAttributes* attributes);
