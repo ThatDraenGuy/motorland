@@ -25,13 +25,15 @@ typedef struct {
 } MotorState;
 
 
+typedef MovementResult (* motor_move_fn)(MotorState* state, int steps);
+typedef MovementResult (* motor_deactivate_fn)(MotorAttributes* attributes);
+
 /* Contains attributes of a single motor.
 * Filled at the initialization phase.
 */
 struct MotorAttributes {
-    MovementResult (* proto_specific_move)(MotorState* state, int steps);
-
-    MovementResult (* deactivate)(MotorAttributes* attributes);
+    motor_move_fn move;
+    motor_deactivate_fn deactivate;
 
     //TODO: do we need a step angle and how it can be used?
     int number_of_steps;
