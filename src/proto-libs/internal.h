@@ -13,9 +13,9 @@ typedef enum {
 /* Contains mutable state for single motor */
 typedef struct {
     Direction direction;
-    int current_steps;
-    int max_steps;
-    int min_steps;
+    uint16_t current_steps;
+    uint16_t max_steps;
+    uint16_t min_steps;
     uint32_t step_delay_us;
     uint32_t last_step_time_us;
 
@@ -25,7 +25,7 @@ typedef struct {
 } MotorState;
 
 
-typedef MovementResult (* motor_move_fn)(MotorState* state, int steps);
+typedef MovementResult (* motor_move_fn)(MotorState* state, uint16_t steps);
 typedef MovementResult (* motor_deactivate_fn)(MotorAttributes* attributes);
 
 /* Contains attributes of a single motor.
@@ -36,7 +36,7 @@ struct MotorAttributes {
     motor_deactivate_fn deactivate;
 
     //TODO: do we need a step angle and how it can be used?
-    int number_of_steps;
+    uint16_t number_of_steps;
     bool invert;
     MotorConnection connection;
     MotorState state;

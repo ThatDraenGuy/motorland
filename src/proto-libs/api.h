@@ -2,6 +2,7 @@
 #define MOTORS_API_H
 
 #include "stdbool.h"
+#include "stdint.h"
 
 /* Immutable attributes of a single motor connected via one of the supported protocols */
 typedef struct MotorAttributes MotorAttributes;
@@ -14,7 +15,7 @@ typedef enum {
 } CommunicationType;
 
 typedef struct {
-    int pins[4];
+    uint8_t pins[4];
 } GpioConnectionData;
 
 typedef struct {
@@ -48,26 +49,26 @@ typedef enum {
 
 
 /* Creates an opaque structure with motor attributes. */
-MotorAttributes* motor_init(int number_of_steps, MotorConnection connection);
+MotorAttributes* motor_init(uint16_t number_of_steps, MotorConnection connection);
 
 /* Deinitilizes motor and destroyes attributes structure */
 void motor_exit(MotorAttributes* attributes);
 
-MovementResult motor_move(MotorAttributes* attributes, int steps);
+MovementResult motor_move(MotorAttributes* attributes, uint16_t steps);
 
 /* how much time to wait between commands. Useful when commnuicating via i2c/spi */
-void motor_set_command_delay(MotorAttributes* attributes, int delay_ms);
+void motor_set_command_delay(MotorAttributes* attributes, uint32_t delay_ms);
 
 /* set gpio pins of max/min physical endstops, which trigger when motor reaches the limit position */
-void motor_set_max_enstop(MotorAttributes* attributes, int max_pin);
+void motor_set_max_enstop(MotorAttributes* attributes, uint16_t max_pin);
 
-void motor_set_min_enstop(MotorAttributes* attributes, int min_pin);
+void motor_set_min_enstop(MotorAttributes* attributes, uint16_t min_pin);
 
 // TODO: decide where to start counting the steps. From the left or from center?
 /* sets max/min positions for the motor */
-void motor_set_min_softlimit(MotorAttributes* attributes, int min_steps);
+void motor_set_min_softlimit(MotorAttributes* attributes, uint16_t min_steps);
 
-void motor_set_max_softlimit(MotorAttributes* attributes, int max_steps);
+void motor_set_max_softlimit(MotorAttributes* attributes, uint16_t max_steps);
 
 /* inverts default rotation direction */
 void motor_set_axis_inversion(MotorAttributes* attributes, bool invert);
