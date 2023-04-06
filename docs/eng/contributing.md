@@ -7,10 +7,10 @@
     module-name/
         CmakeLists.txt
         src/
-            file.h
+            file.c
             ...
         include/
-            file.c
+            file.h
             ...
     ``` 
 2. Inside `include` folder there should be a file with the name `module-name.h` which contains only includes and
