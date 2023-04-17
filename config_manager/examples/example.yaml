@@ -22,7 +22,5 @@ motors:
     type: i2c
     bus: 1
     address: 0x50
-    speed: 150
-    acceleration: 25
     steps_per_revolution: 2038
     steps_rev_per_minute: 5
