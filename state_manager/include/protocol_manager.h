@@ -1,9 +1,4 @@
-//
-// Created by viacheslav on 11.04.23.
-//
-
-#ifndef MOTORLAND_FORK_PROTOCOL_MANAGER_H
-#define MOTORLAND_FORK_PROTOCOL_MANAGER_H
+#pragma once
 
 // TODO: add verdicts
 typedef enum {
@@ -13,7 +8,7 @@ typedef enum {
     COMMUNICATION_ERROR
 } MovementResult;
 
-struct ProtocolManager {
+typedef struct {
     Motor *motors;
     Queue *motor_queues;
     /*
@@ -22,8 +17,8 @@ struct ProtocolManager {
      Blocking movement can be also supported by adding mutex lock
      */
     pthread_t *motor_threads;
-    MovementResult (*move_motors)(ProtocolManager *manager, MotorAttributes* attributes);
-};
+    move_motors_fn move_motors;
 
+} ProtocolManager;
 
-#endif //MOTORLAND_FORK_PROTOCOL_MANAGER_H
+typedef MovementResult* (*move_motors_fn)(ProtocolManager *manager, MotorAttributes* attributes);

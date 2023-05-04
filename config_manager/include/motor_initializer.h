@@ -1,6 +1,3 @@
-#ifndef MOTORLAND_FORK_MOTOR_INITIALIZER_H
-#define MOTORLAND_FORK_MOTOR_INITIALIZER_H
+#pragma once
 
-Motor *init_motors(Config *config);
-
-#endif //MOTORLAND_FORK_MOTOR_INITIALIZER_H
+Motor *motor_initializer_init_motors(Config *config);
