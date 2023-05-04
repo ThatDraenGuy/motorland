@@ -1,4 +1,4 @@
-project(manager C)
+project(config_manager C)
 
 set(SOURCES src/manager.c)
 

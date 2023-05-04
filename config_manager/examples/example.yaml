@@ -1,0 +1,26 @@
+motors:
+  - name: gpio_motor
+    type: gpio
+    pins:
+      - 12
+      - 13
+      - 14
+      - 15
+    steps_per_revolution: 2038
+    steps_rev_per_minute: 5
+
+  - name: spi_motor
+    type: spi
+    bus: 0           # SPI bus number
+    device: 0        # Chip select line (CS) for the stepper motor driver
+    mode: 0          # SPI mode (0, 1, 2, or 3)
+    max_speed_hz: 10 # Maximum clock frequency in Hz
+    steps_per_revolution: 2038
+    steps_rev_per_minute: 5
+
+  - name: i2c_motor
+    type: i2c
+    bus: 1
+    address: 0x50
+    steps_per_revolution: 2038
+    steps_rev_per_minute: 5
