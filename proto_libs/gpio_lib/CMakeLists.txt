@@ -1,5 +1,20 @@
 project(gpio_lib C)
 
-set(SOURCES src/gpio_lib.c)
+file(GLOB_RECURSE SOURCES "${CMAKE_CURRENT_LIST_DIR}/src/*.c")
+file(GLOB_RECURSE HEADERS "${CMAKE_CURRENT_LIST_DIR}/include/*.h")
 
-add_executable(${PROJECT_NAME} ${SOURCES})
+include_directories(include)
+
+add_library(${PROJECT_NAME})
+
+target_sources(${PROJECT_NAME}
+        PRIVATE
+        ${SOURCES}
+        PUBLIC
+        ${HEADERS}
+        )
+
+target_include_directories(${PROJECT_NAME}
+        PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}
+        )
