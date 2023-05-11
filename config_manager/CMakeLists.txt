@@ -1,5 +1,5 @@
 project(config_manager C)
 
-set(SOURCES src/manager.c)
+set(SOURCES src/config_manager.c)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
