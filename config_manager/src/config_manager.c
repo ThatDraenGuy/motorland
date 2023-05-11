@@ -22,7 +22,7 @@ int config_manager_parse_config(FILE **f, ConfigWrapper *config_wrapper) {
         *config_wrapper = temp_gpio_wrapper();
         return SUCCESS;
     }
-    return config_parser_parse_config(f, config_wrapper);
+    // TODO: parse config from file
 
 }
 
