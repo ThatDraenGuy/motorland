@@ -22,4 +22,8 @@ typedef struct {
 
 } ProtocolManager;
 
-typedef MovementResult* (*move_motors_fn)(ProtocolManager *manager, RotationCommandWrapper wrapper);
+typedef MovementResult *(*move_motors_fn)(ProtocolManager *manager, RotationCommandWrapper wrapper);
+
+typedef struct {
+    // TODO: what do we need here
+} RotationCommandWrapper;
