@@ -5,9 +5,41 @@ file(GLOB_RECURSE HEADERS "${CMAKE_CURRENT_LIST_DIR}/include/*.h")
 
 include_directories(include)
 
+include(ExternalProject)
+set(LIBGPIOD_ROOT ${CMAKE_BINARY_DIR}/external)
+set(LIBGPIOD_LIB_DIR ${LIBGPIOD_ROOT}/lib)
+set(LIBGPIOD_INCLUDE_DIRS ${LIBGPIOD_ROOT}/include)
+
+ExternalProject_Add(
+        libgpiod_external
+        PREFIX ${LIBGPIOD_ROOT}
+        GIT_REPOSITORY "https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git"
+        GIT_TAG "v1.6.3"
+        UPDATE_COMMAND ""
+        PATCH_COMMAND ""
+        BINARY_DIR ${LIBGPIOD_ROOT}/src/libgpiod
+        SOURCE_DIR ${LIBGPIOD_ROOT}/src/libgpiod
+        INSTALL_DIR ${LIBGPIOD_ROOT}/bin
+        CONFIGURE_COMMAND <SOURCE_DIR>/configure
+        --prefix=${LIBGPIOD_ROOT}
+        --enable-tools=yes
+        --enable-bindings-python=no
+        BUILD_COMMAND ${MAKE}
+        BUILD_BYPRODUCTS ${LIBGPIOD_LIB_DIR}/libgpiod.a
+)
+
+ExternalProject_Add_Step(libgpiod_external
+        autogen
+        COMMAND ./autogen.sh
+        DEPENDEES download
+        DEPENDERS configure
+        WORKING_DIRECTORY ${LIBGPIOD_ROOT}/src/libgpiod)
+
+add_library(libgpiod STATIC IMPORTED)
+set_target_properties(libgpiod PROPERTIES IMPORTED_LOCATION ${LIBGPIOD_LIB_DIR}/libgpiod.a)
+add_dependencies(libgpiod libgpiod_external)
 
 add_executable(${PROJECT_NAME} main.c)
-#add_library(${PROJECT_NAME})
 
 target_sources(${PROJECT_NAME}
         PRIVATE
@@ -19,6 +51,9 @@ target_sources(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME}
         PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}
-        PRIVATE
-        ./libs/libgpiod-1.6.3/include
+#        PRIVATE
+#        ./libs/libgpiod-1.6.3/include
+        PRIVATE ${LIBGPIOD_INCLUDE_DIRS}
         )
+
+target_link_libraries(${PROJECT_NAME} PRIVATE libgpiod)
