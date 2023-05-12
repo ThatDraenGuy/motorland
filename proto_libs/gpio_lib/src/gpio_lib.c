@@ -1,5 +1,11 @@
 #include "motor_internal.h"
 
+const int SEQUENCE_MASK = 7;
+const int FULL_SEQUENCE[8][4] = {
+    { 1, 0, 0, 0 }, { 1, 0, 1, 0 }, { 0, 0, 1, 0 }, { 0, 1, 1, 0 },
+    { 0, 1, 0, 0 }, { 0, 1, 0, 1 }, { 0, 0, 0, 1 }, { 1, 0, 0, 1 },
+};
+
 void motor_rotate(struct MotorAttributes *motor, int steps_to_move)
 {
 	motor->rotate(motor, steps_to_move);

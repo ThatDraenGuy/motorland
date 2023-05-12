@@ -17,12 +17,6 @@
 
 // Define the delay between steps in microseconds
 
-const int SEQUENCE_MASK = 7;
-const int FULL_SEQUENCE[8][4] = {
-	{ 1, 0, 0, 0 }, { 1, 0, 1, 0 }, { 0, 0, 1, 0 }, { 0, 1, 1, 0 },
-	{ 0, 1, 0, 0 }, { 0, 1, 0, 1 }, { 0, 0, 0, 1 }, { 1, 0, 0, 1 },
-};
-
 struct GpioInfo {
 	struct gpiod_chip *chip;
 	struct gpiod_line_bulk *lines;
