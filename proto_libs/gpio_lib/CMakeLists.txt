@@ -5,7 +5,9 @@ file(GLOB_RECURSE HEADERS "${CMAKE_CURRENT_LIST_DIR}/include/*.h")
 
 include_directories(include)
 
-add_library(${PROJECT_NAME})
+
+add_executable(${PROJECT_NAME} main.c)
+#add_library(${PROJECT_NAME})
 
 target_sources(${PROJECT_NAME}
         PRIVATE

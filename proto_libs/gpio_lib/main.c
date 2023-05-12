@@ -1,4 +1,5 @@
 #include "motor_internal.h"
+#include <string.h>
 
 struct Params {
 	int32_t steps;
@@ -36,7 +37,11 @@ int main(int argc, char *argv[])
 {
 	struct Params *params = read_params(argc, argv);
 
-	struct MotorAttributes *motor = motor_setup(params->speed);
+        ConnectionAttributes connection;
+        int pins[] = {2, 3, 4, 5};
+        int steps_per_revolution = 2038;
+        memcpy(connection.gpio.pins, pins, sizeof(pins));
+	struct MotorAttributes *motor = motor_setup(connection, steps_per_revolution, params->speed);
 	motor_rotate(motor, params->steps);
 
 	free(params);
