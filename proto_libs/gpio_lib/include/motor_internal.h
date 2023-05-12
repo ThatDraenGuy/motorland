@@ -12,13 +12,8 @@
 // GPIO7 line pins 58 59 60 61
 #define CHIP0_DEV "/dev/gpiochip7"
 #define PINS_COUNT 4
-#define PIN_1 2
-#define PIN_2 3
-#define PIN_3 4
-#define PIN_4 5
 
 #define CONSUMER_NAME "gpio-motor"
-#define STEPS_PER_REVOLUTION 2038
 
 // Define the delay between steps in microseconds
 

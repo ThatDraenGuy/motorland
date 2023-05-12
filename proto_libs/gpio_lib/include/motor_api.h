@@ -45,7 +45,7 @@ typedef enum {
 } MovementResult;
 
 /* Creates an opaque structure with motor attributes. */
-struct MotorAttributes *motor_setup(uint32_t speed);
+struct MotorAttributes *motor_setup(ConnectionAttributes connection, int steps_per_revolution, uint32_t speed);
 
 void motor_rotate(struct MotorAttributes *motor, int steps_to_move);
 

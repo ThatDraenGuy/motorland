@@ -16,7 +16,7 @@ static void step_motor(struct gpiod_line_bulk *lines, const int pin_values[4]);
 
 static void deactivate(struct MotorAttributes *motor);
 
-struct MotorAttributes *motor_setup(uint32_t speed)
+struct MotorAttributes *motor_setup(ConnectionAttributes connection, int steps_per_revolution, uint32_t speed)
 {
 	int ret;
 	struct MotorAttributes *motor = malloc(sizeof(struct MotorAttributes));
@@ -34,14 +34,14 @@ struct MotorAttributes *motor_setup(uint32_t speed)
 		return NULL;
 	}
 
-	motor->gpio.pin_offsets[0] = PIN_1;
-	motor->gpio.pin_offsets[1] = PIN_3;
-	motor->gpio.pin_offsets[2] = PIN_2;
-	motor->gpio.pin_offsets[3] = PIN_4;
-	motor->deactivate = &deactivate;
+        motor->gpio.pin_offsets[0] = connection.gpio.pins[0];
+        motor->gpio.pin_offsets[1] = connection.gpio.pins[1];
+        motor->gpio.pin_offsets[2] = connection.gpio.pins[2];
+        motor->gpio.pin_offsets[3] = connection.gpio.pins[3];
+        motor->deactivate = &deactivate;
 	motor->rotate = &rotate;
-	motor->steps_per_revolution = STEPS_PER_REVOLUTION;
-	motor->step_delay = 60L * 1000L * 1000L / STEPS_PER_REVOLUTION / speed;
+	motor->steps_per_revolution = steps_per_revolution;
+	motor->step_delay = 60L * 1000L * 1000L / steps_per_revolution / speed;
 	const int disabled_values[] = { 0, 0, 0, 0 };
 	ret = gpiod_chip_get_lines(motor->gpio.chip, motor->gpio.pin_offsets, 4,
 				   motor->gpio.lines);
