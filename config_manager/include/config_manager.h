@@ -2,8 +2,8 @@
 
 typedef struct {
     size_t motors_count;
-    MotorAttributes* attributes;
-}MotorsWrapper;
+    MotorAttributes *attributes;
+} MotorsWrapper;
 
 int config_manager_init_from_file(char *path, MotorsWrapper *wrapper)
 

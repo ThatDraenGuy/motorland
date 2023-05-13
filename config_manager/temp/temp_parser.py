@@ -17,11 +17,7 @@ packed_data = b''  # Initialize packed data as an empty byte string
 for motor in config["motors"]:
     # Extract the motor data from the YAML
     name = motor["name"].encode("utf-8")
-<<<<<<< HEAD
     type = motor["type"]
-=======
-    type = motor["type"].encode("utf-8")
->>>>>>> master
     steps_per_rev = motor["steps_per_revolution"]
     max_speed = motor["steps_rev_per_minute"]
     if type == "gpio":
