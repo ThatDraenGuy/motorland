@@ -6,9 +6,11 @@ file(GLOB_RECURSE HEADERS "${CMAKE_CURRENT_LIST_DIR}/include/*.h")
 include_directories(include)
 
 include(ExternalProject)
+
 set(LIBGPIOD_ROOT ${CMAKE_BINARY_DIR}/external)
 set(LIBGPIOD_LIB_DIR ${LIBGPIOD_ROOT}/lib)
 set(LIBGPIOD_INCLUDE_DIRS ${LIBGPIOD_ROOT}/include)
+set(TARGET_HOST arm-linux-musleabi)
 
 ExternalProject_Add(
         libgpiod_external
@@ -22,9 +24,12 @@ ExternalProject_Add(
         INSTALL_DIR ${LIBGPIOD_ROOT}/bin
         CONFIGURE_COMMAND <SOURCE_DIR>/configure
         --prefix=${LIBGPIOD_ROOT}
-        --enable-tools=yes
+        --prefix=$SYSROOT
+        --enable-tools=no
         --enable-bindings-python=no
-        BUILD_COMMAND ${MAKE}
+        --host=${TARGET_HOST}
+        --target=${TARGET_HOST}
+        BUILD_COMMAND ${MAKE} ARCH=arm CROSS_COMPILE=arm-openipc-linux-musleabi-
         BUILD_BYPRODUCTS ${LIBGPIOD_LIB_DIR}/libgpiod.a
 )
 
