@@ -13,7 +13,7 @@ int config_manager_init_from_file(char *path, MotorsWrapper *wrapper) {
     if (parse_result != SUCCESS) {
         return parse_result;
     }
-    return config_manager_init_motors(config, wrapper);
+    // TODO: init motors
 }
 
 int config_manager_parse_config(FILE **f, ConfigWrapper *config_wrapper) {
@@ -24,9 +24,4 @@ int config_manager_parse_config(FILE **f, ConfigWrapper *config_wrapper) {
     }
     // TODO: parse config from file
 
-}
-
-int config_manager_init_motors(ConfigWrapper *config_wrapper, MotorsWrapper *wrapper) {
-    wrapper->motors_count = config_wrapper->motors_count;
-    // TODO: transform structs
 }
