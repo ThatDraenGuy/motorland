@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 	struct Params *params = read_params(argc, argv);
 
         ConnectionAttributes connection;
-        int pins[] = {2, 3, 4, 5};
+        int pins[] = {2, 4, 3, 5};
         int steps_per_revolution = 2038;
         memcpy(connection.gpio.pins, pins, sizeof(pins));
 	struct MotorAttributes *motor = motor_setup(connection, steps_per_revolution, params->speed);
