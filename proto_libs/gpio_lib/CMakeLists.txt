@@ -10,7 +10,7 @@ include(ExternalProject)
 set(LIBGPIOD_ROOT ${CMAKE_BINARY_DIR}/external)
 set(LIBGPIOD_LIB_DIR ${LIBGPIOD_ROOT}/lib)
 set(LIBGPIOD_INCLUDE_DIRS ${LIBGPIOD_ROOT}/include)
-set(TARGET_HOST arm-linux-musleabi)
+set(TARGET_HOST arm-openipc-linux-musleabi)
 
 ExternalProject_Add(
         libgpiod_external
@@ -24,7 +24,6 @@ ExternalProject_Add(
         INSTALL_DIR ${LIBGPIOD_ROOT}/bin
         CONFIGURE_COMMAND <SOURCE_DIR>/configure
         --prefix=${LIBGPIOD_ROOT}
-        --prefix=$SYSROOT
         --enable-tools=no
         --enable-bindings-python=no
         --host=${TARGET_HOST}
@@ -35,7 +34,7 @@ ExternalProject_Add(
 
 ExternalProject_Add_Step(libgpiod_external
         autogen
-        COMMAND ./autogen.sh
+        COMMAND ./autogen.sh --host=${TARGET_HOST} --target=${TARGET_HOST}
         DEPENDEES download
         DEPENDERS configure
         WORKING_DIRECTORY ${LIBGPIOD_ROOT}/src/libgpiod)
