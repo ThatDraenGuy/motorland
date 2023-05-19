@@ -1,4 +1,4 @@
-project(daemon C)
+project(motorsd C)
 
 set(SOURCES src/daemon.c)
 

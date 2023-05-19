@@ -1,0 +1,61 @@
+#!/bin/sh
+
+DAEMON="motorsd"
+PID_FILE="/var/run/$DAEMON.pid"
+MOTORSD_ARGS=""
+
+TEST_DAEMON_PATH="/mnt/c/Users/Administrator/CLionProjects/motorland/cmake-build-debug/daemon"
+
+start() {
+  printf 'Starting %s: ' "$DAEMON"
+  # shellcheck disable=SC2039
+  [ -f /usr/sbin/$DAEMON ] || echo -n "DISABLED, "
+  # shellcheck disable=SC2086 # keep word splitting
+
+  # start-stop-daemon -b -m -S -q -p "$PID_FILE" -x "/usr/sbin/$DAEMON -- $MOTORSD_ARGS"
+  start-stop-daemon -b -m -S -q -p "$PID_FILE" -x "$TEST_DAEMON_PATH/$DAEMON" -- $MOTORSD_ARGS
+
+  # -b run in background programs that dont detach on their own
+  # -m make pidfile
+  # -S start
+  # -q quiet
+  # -p check pidfile
+  status=$?
+  if [ "$status" -eq 0 ]; then
+  		echo "OK"
+  	else
+  		echo "FAIL"
+  	fi
+  	return "$status"
+}
+
+stop() {
+  printf 'Stopping %s: ' "$DAEMON"
+  	# shellcheck disable=SC2039
+  	[ -f /usr/sbin/$DAEMON ] || echo -en "DISABLED, "
+  	start-stop-motorsd -K -q -p "$PID_FILE"
+  	status=$?
+  	if [ "$status" -eq 0 ]; then
+  		rm -f "$PID_FILE"
+  		echo "OK"
+  	else
+  		echo "FAIL"
+  	fi
+  	return "$status"
+}
+
+restart() {
+	stop
+	sleep 1
+	start
+}
+
+case "$1" in
+	start|stop|restart)
+		"$1";;
+	reload)
+		restart;;
+	*)
+		echo "Usage: $0 {start|stop|restart|reload}"
+		exit 1
+esac
