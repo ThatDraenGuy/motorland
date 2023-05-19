@@ -10,6 +10,7 @@ typedef enum {
 
 typedef struct {
     Motor *motors;
+    // TODO: decide if whe need copy of MotorAttributes. It can be useful to relate motors to their queues
     Queue *motor_queues;
     /*
     We use unix-threads to move motors simultaneously. New commands will be added to
@@ -21,4 +22,8 @@ typedef struct {
 
 } ProtocolManager;
 
-typedef MovementResult* (*move_motors_fn)(ProtocolManager *manager, MotorAttributes* attributes);
+typedef MovementResult *(*move_motors_fn)(ProtocolManager *manager, RotationCommandWrapper wrapper);
+
+typedef struct {
+    // TODO: what do we need here
+} RotationCommandWrapper;
