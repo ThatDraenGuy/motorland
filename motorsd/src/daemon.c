@@ -1,17 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <signal.h>
+#include "daemon.h"
+#include "daemon_utils.h"
 
 #define SOCKET_PATH "/tmp/motorsd_socket"
-#define CODE_WORD "secret"
-
-void handleCodeWordReceived() {
-    printf("Code word received!\n");
-    // Do something when the code word is received
-}
 
 void signalHandler(int signum) {
     if (signum == SIGTERM) {
@@ -25,9 +15,9 @@ int main() {
     signal(SIGTERM, signalHandler);
 
     // Create a Unix socket
-    int sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
-    if (sockfd < 0) {
-        perror("socket");
+    int socFd = socket(AF_UNIX, SOCK_STREAM, 0);
+    if (socFd < 0) {
+        perror("Error creating socket");
         exit(EXIT_FAILURE);
     }
 
@@ -41,16 +31,16 @@ int main() {
     unlink(SOCKET_PATH);
 
     // Bind the socket to the specified address
-    if (bind(sockfd, (struct sockaddr *) &addr, sizeof(struct sockaddr_un)) < 0) {
-        perror("bind");
-        close(sockfd);
+    if (bind(socFd, (struct sockaddr *) &addr, sizeof(struct sockaddr_un)) < 0) {
+        perror("Error binding socket");
+        close(socFd);
         exit(EXIT_FAILURE);
     }
 
     // Listen for incoming connections
-    if (listen(sockfd, 1) < 0) {
-        perror("listen");
-        close(sockfd);
+    if (listen(socFd, 1) < 0) {
+        perror("Error trying to listen to socket");
+        close(socFd);
         exit(EXIT_FAILURE);
     }
 
@@ -58,31 +48,29 @@ int main() {
 
     // Accept incoming connections and process data
     while (1) {
-        int clientfd = accept(sockfd, NULL, NULL);
-        if (clientfd < 0) {
-            perror("accept");
-            close(sockfd);
+        int clientFd = accept(socFd, NULL, NULL);
+        if (clientFd < 0) {
+            perror("Error accepting connection");
+            close(socFd);
             exit(EXIT_FAILURE);
         }
 
-        char buffer[sizeof(CODE_WORD)];
-        ssize_t bytesRead = recv(clientfd, buffer, sizeof(buffer), 0);
+        char buffer[sizeof(MotorCommand)];
+        size_t bytesRead = recv(clientFd, buffer, sizeof(buffer), 0);
         if (bytesRead < 0) {
-            perror("recv");
-            close(clientfd);
-            close(sockfd);
+            perror("Error receiving message from socket");
+            close(clientFd);
+            close(socFd);
             exit(EXIT_FAILURE);
         }
 
-        if (strncmp(buffer, CODE_WORD, sizeof(CODE_WORD)) == 0) {
-            handleCodeWordReceived();
-        }
+        parseMotorCommand((const uint8_t *) &bytesRead, sizeof(buffer));
 
-        close(clientfd);
+        close(clientFd);
     }
 
     // Close the socket and remove the socket file
-    close(sockfd);
+    close(socFd);
     unlink(SOCKET_PATH);
 
     return 0;

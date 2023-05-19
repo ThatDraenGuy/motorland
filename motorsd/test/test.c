@@ -13,9 +13,9 @@ int main(int argc, char *argv[]) {
     }
 
     // Create a Unix socket
-    int sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
-    if (sockfd < 0) {
-        perror("socket");
+    int sockFd = socket(AF_UNIX, SOCK_STREAM, 0);
+    if (sockFd < 0) {
+        perror("Cannot create socket");
         exit(EXIT_FAILURE);
     }
 
@@ -26,24 +26,24 @@ int main(int argc, char *argv[]) {
     strncpy(addr.sun_path, SOCKET_PATH, sizeof(addr.sun_path) - 1);
 
     // Connect to the server
-    if (connect(sockfd, (struct sockaddr *)&addr, sizeof(struct sockaddr_un)) < 0) {
-        perror("connect");
-        close(sockfd);
+    if (connect(sockFd, (struct sockaddr *)&addr, sizeof(struct sockaddr_un)) < 0) {
+        perror("Error connecting to socket");
+        close(sockFd);
         exit(EXIT_FAILURE);
     }
 
     // Send the message to the server
-    ssize_t bytesSent = send(sockfd, argv[1], strlen(argv[1]), 0);
+    ssize_t bytesSent = send(sockFd, argv[1], strlen(argv[1]), 0);
     if (bytesSent < 0) {
-        perror("send");
-        close(sockfd);
+        perror("Error sending message");
+        close(sockFd);
         exit(EXIT_FAILURE);
     }
 
     printf("Message sent successfully!\n");
 
     // Close the socket
-    close(sockfd);
+    close(sockFd);
 
     return 0;
 }
