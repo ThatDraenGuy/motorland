@@ -5,7 +5,7 @@
 #include <sys/un.h>
 #include <signal.h>
 
-#define SOCKET_PATH "/tmp/my_socket"
+#define SOCKET_PATH "/tmp/motorsd_socket"
 #define CODE_WORD "secret"
 
 void handleCodeWordReceived() {

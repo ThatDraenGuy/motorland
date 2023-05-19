@@ -4,7 +4,7 @@ DAEMON="motorsd"
 PID_FILE="/var/run/$DAEMON.pid"
 MOTORSD_ARGS=""
 
-TEST_DAEMON_PATH="/mnt/c/Users/Administrator/CLionProjects/motorland/cmake-build-debug/daemon"
+TEST_DAEMON_PATH="/mnt/c/Users/Administrator/CLionProjects/motorland/cmake-build-debug/bin"
 
 start() {
   printf 'Starting %s: ' "$DAEMON"
