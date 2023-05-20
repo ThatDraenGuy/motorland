@@ -1,6 +1,3 @@
-#include <stdint.h>
-#include <stddef.h>
-
 #include "daemon_utils.h"
 
 MotorCommand parseMotorCommand(const uint8_t* byteOrder, size_t size) {
@@ -8,8 +5,8 @@ MotorCommand parseMotorCommand(const uint8_t* byteOrder, size_t size) {
 
     // Invalid byte order size
     // Handle error or return default command
-    if (size != sizeof(MotorCommand)) {
-        MotorCommand nothing = {0, 0, 0};
+    if (size != sizeof(MotorCommand) || byteOrder[4] != 0xFF) {
+        MotorCommand nothing = {0, 0, 0, 0};
         return nothing;
     }
 
@@ -17,6 +14,7 @@ MotorCommand parseMotorCommand(const uint8_t* byteOrder, size_t size) {
     command.motorIndex = byteOrder[0];
     command.numOfSteps = (byteOrder[1] << 8) | byteOrder[2];
     command.speed = byteOrder[3];
+    command.checksum = byteOrder[4];
 
     return command;
 }
