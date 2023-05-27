@@ -1,9 +1,10 @@
 #include "daemon.h"
 #include "daemon_utils.h"
+#include "motor_invoker.h"
 
 #define SOCKET_PATH "/tmp/motorsd_socket"
 
-void signalHandler(int signum) {
+void signal_handler(int signum) {
     if (signum == SIGTERM) {
         printf("Received SIGTERM, shutting down.\n");
         exit(EXIT_SUCCESS);
@@ -12,11 +13,11 @@ void signalHandler(int signum) {
 
 int main() {
     // Register signal handler for graceful shutdown
-    signal(SIGTERM, signalHandler);
+    signal(SIGTERM, signal_handler);
 
     // Create a Unix socket
-    int socFd = socket(AF_UNIX, SOCK_STREAM, 0);
-    if (socFd < 0) {
+    int soc_fd = socket(AF_UNIX, SOCK_STREAM, 0);
+    if (soc_fd < 0) {
         perror("Error creating socket");
         exit(EXIT_FAILURE);
     }
@@ -31,16 +32,16 @@ int main() {
     unlink(SOCKET_PATH);
 
     // Bind the socket to the specified address
-    if (bind(socFd, (struct sockaddr *) &addr, sizeof(struct sockaddr_un)) < 0) {
+    if (bind(soc_fd, (struct sockaddr *) &addr, sizeof(struct sockaddr_un)) < 0) {
         perror("Error binding socket");
-        close(socFd);
+        close(soc_fd);
         exit(EXIT_FAILURE);
     }
 
     // Listen for incoming connections
-    if (listen(socFd, 1) < 0) {
+    if (listen(soc_fd, 1) < 0) {
         perror("Error trying to listen to socket");
-        close(socFd);
+        close(soc_fd);
         exit(EXIT_FAILURE);
     }
 
@@ -48,30 +49,31 @@ int main() {
 
     // Accept incoming connections and process data
     while (1) {
-        int clientFd = accept(socFd, NULL, NULL);
-        if (clientFd < 0) {
+        int client_fd = accept(soc_fd, NULL, NULL);
+        if (client_fd < 0) {
             perror("Error accepting connection");
-            close(socFd);
+            close(soc_fd);
             exit(EXIT_FAILURE);
         }
 
         char buffer[sizeof(MotorCommand)];
-        size_t bytesRead = recv(clientFd, buffer, sizeof(buffer), 0);
+        size_t bytesRead = recv(client_fd, buffer, sizeof(buffer), 0);
         if (bytesRead < 0) {
             perror("Error receiving message from socket");
-            close(clientFd);
-            close(socFd);
+            close(client_fd);
+            close(soc_fd);
             exit(EXIT_FAILURE);
         }
 
-        MotorCommand command = parseMotorCommand((const uint8_t *) &bytesRead, sizeof(buffer));
+        MotorCommand command = parse_motor_command((const uint8_t *) &bytesRead, sizeof(buffer));
 
+        process_motor_command(command);
 
-        close(clientFd);
+        close(client_fd);
     }
 
     // Close the socket and remove the socket file
-    close(socFd);
+    close(soc_fd);
     unlink(SOCKET_PATH);
 
     return 0;

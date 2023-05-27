@@ -1,8 +1,5 @@
-#ifndef MOTORLAND_MOTOR_INVOKER_H
-#define MOTORLAND_MOTOR_INVOKER_H
+#pragma once
 
 #include "daemon_utils.h"
 
-// #include "protocol_manager.h"
-
-#endif //MOTORLAND_MOTOR_INVOKER_H
+void process_motor_command(MotorCommand command);

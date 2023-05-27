@@ -1,5 +1,4 @@
-#ifndef MOTORLAND_DAEMON_H
-#define MOTORLAND_DAEMON_H
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,5 +6,3 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <signal.h>
-
-#endif //MOTORLAND_DAEMON_H

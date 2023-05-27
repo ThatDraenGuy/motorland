@@ -1,5 +1,4 @@
-#ifndef MOTOR_COMMAND_PARSER_H
-#define MOTOR_COMMAND_PARSER_H
+#pragma once
 
 #include <stdint.h>
 #include <stddef.h>
@@ -11,6 +10,4 @@ typedef struct {
     uint8_t checksum;
 } MotorCommand;
 
-MotorCommand parseMotorCommand(const uint8_t* byteOrder, size_t size);
-
-#endif  // MOTOR_COMMAND_PARSER_H
+MotorCommand parse_motor_command(const uint8_t* command_byte_order, size_t size);
