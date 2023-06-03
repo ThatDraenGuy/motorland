@@ -6,8 +6,6 @@
 /* Immutable attributes of a single motor connected via one of the supported protocols */
 typedef struct MotorAttributes MotorAttributes;
 
-struct GpioInfo;
-
 /* Represents how the stepper is connected to the main board */
 typedef enum { GPIO = 0, SPI, I2C } CommunicationType;
 
@@ -23,11 +21,16 @@ typedef struct {
 	char *i2c_dev_name;
 } I2cConnectionData;
 
+typedef struct {
+	char *uart_dev_name;
+} UartConnectionData;
+
 /* Stores data required for one of the supported protocols */
 typedef union {
 	GpioConnectionData gpio;
 	SpiConnectionData spi;
 	I2cConnectionData i2c;
+	UartConnectionData uart;
 } ConnectionAttributes;
 
 /* Stores data required to communicate with a motor/extension-board */
