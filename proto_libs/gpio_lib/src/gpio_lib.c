@@ -1,9 +1,27 @@
+#include <stdio.h>
+#include <malloc.h>
+#include <unistd.h>
 #include "motor_internal.h"
+#include "gpiod.h"
+
+// Define the GPIO pins used to control the stepper motor
+// GPIO7 line pins 58 59 60 61
+#define CHIP0_DEV "/dev/gpiochip7"
+#define PINS_COUNT 4
+
+#define CONSUMER_NAME "gpio-motor"
 
 const int SEQUENCE_MASK = 7;
 const int FULL_SEQUENCE[8][4] = {
     { 1, 0, 0, 0 }, { 1, 0, 1, 0 }, { 0, 0, 1, 0 }, { 0, 1, 1, 0 },
     { 0, 1, 0, 0 }, { 0, 1, 0, 1 }, { 0, 0, 0, 1 }, { 1, 0, 0, 1 },
+};
+
+struct ProtoSpecificInfo {
+	struct gpiod_chip *chip;
+	struct gpiod_line_bulk *lines;
+	unsigned int pin_offsets[PINS_COUNT];
+	int disable_values[PINS_COUNT];
 };
 
 void motor_rotate(struct MotorAttributes *motor, int steps_to_move)

@@ -1,5 +1,8 @@
 #include "motor_internal.h"
 #include <string.h>
+#include <malloc.h>
+#include <stdlib.h>
+#include <getopt.h>
 
 struct Params {
 	int32_t steps;

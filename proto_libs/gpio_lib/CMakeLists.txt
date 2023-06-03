@@ -1,9 +1,6 @@
 project(gpio_lib C)
 
 file(GLOB_RECURSE SOURCES "${CMAKE_CURRENT_LIST_DIR}/src/*.c")
-file(GLOB_RECURSE HEADERS "${CMAKE_CURRENT_LIST_DIR}/include/*.h")
-
-include_directories(include)
 
 include(ExternalProject)
 
@@ -39,25 +36,21 @@ ExternalProject_Add_Step(libgpiod_external
         DEPENDERS configure
         WORKING_DIRECTORY ${LIBGPIOD_ROOT}/src/libgpiod)
 
+# dependency
 add_library(libgpiod STATIC IMPORTED)
 set_target_properties(libgpiod PROPERTIES IMPORTED_LOCATION ${LIBGPIOD_LIB_DIR}/libgpiod.a)
 add_dependencies(libgpiod libgpiod_external)
 
 add_executable(${PROJECT_NAME} main.c)
-
 target_sources(${PROJECT_NAME}
         PRIVATE
         ${SOURCES}
-        PUBLIC
-        ${HEADERS}
         )
 
 target_include_directories(${PROJECT_NAME}
         PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}
-#        PRIVATE
-#        ./libs/libgpiod-1.6.3/include
         PRIVATE ${LIBGPIOD_INCLUDE_DIRS}
         )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE libgpiod)
+target_link_libraries(${PROJECT_NAME} LINK_PRIVATE libgpiod common)
