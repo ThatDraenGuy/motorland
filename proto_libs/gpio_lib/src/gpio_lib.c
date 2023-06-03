@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <malloc.h>
 #include <unistd.h>
 #include "motor_internal.h"
 #include "gpiod.h"
@@ -49,32 +48,32 @@ struct MotorAttributes *motor_setup(ConnectionAttributes connection, int steps_p
 		return NULL;
 	}
 
-	motor->gpio.lines = malloc(sizeof(struct gpiod_line_bulk));
+	motor->info->lines = malloc(sizeof(struct gpiod_line_bulk));
 
-	motor->gpio.chip = gpiod_chip_open(CHIP0_DEV);
+	motor->info->chip = gpiod_chip_open(CHIP0_DEV);
 	;
-	if (!motor->gpio.chip) {
+	if (!motor->info->chip) {
 		perror("Failed to open GPIO chip");
 		return NULL;
 	}
 
-        motor->gpio.pin_offsets[0] = connection.gpio.pins[0];
-        motor->gpio.pin_offsets[1] = connection.gpio.pins[1];
-        motor->gpio.pin_offsets[2] = connection.gpio.pins[2];
-        motor->gpio.pin_offsets[3] = connection.gpio.pins[3];
+        motor->info->pin_offsets[0] = connection.gpio.pins[0];
+        motor->info->pin_offsets[1] = connection.gpio.pins[1];
+        motor->info->pin_offsets[2] = connection.gpio.pins[2];
+        motor->info->pin_offsets[3] = connection.gpio.pins[3];
         motor->deactivate = &deactivate;
 	motor->rotate = &rotate;
 	motor->steps_per_revolution = steps_per_revolution;
 	motor->step_delay = 60L * 1000L * 1000L / steps_per_revolution / speed;
 	const int disabled_values[] = { 0, 0, 0, 0 };
-	ret = gpiod_chip_get_lines(motor->gpio.chip, motor->gpio.pin_offsets, 4,
-				   motor->gpio.lines);
+	ret = gpiod_chip_get_lines(motor->info->chip, motor->info->pin_offsets, 4,
+				   motor->info->lines);
 	if (ret < 0) {
 		perror("Failed to get lines");
 		return NULL;
 	}
 
-	ret = gpiod_line_request_bulk_output(motor->gpio.lines, CONSUMER_NAME,
+	ret = gpiod_line_request_bulk_output(motor->info->lines, CONSUMER_NAME,
 					     disabled_values);
 	if (ret < 0) {
 		perror("Failed to set output bulk");
@@ -101,7 +100,7 @@ static void rotate(struct MotorAttributes *motor, int steps_to_move)
 		} else if (motor->current_steps == 0) {
 			motor->current_steps = motor->steps_per_revolution;
 		}
-		step_motor(motor->gpio.lines,
+		step_motor(motor->info->lines,
 			   FULL_SEQUENCE[motor->current_steps & SEQUENCE_MASK]);
 		usleep(motor->step_delay);
 	}
@@ -118,14 +117,14 @@ static void step_motor(struct gpiod_line_bulk *lines, const int pin_values[4])
 
 static void deactivate(struct MotorAttributes *motor)
 {
-	int ret = gpiod_line_set_value_bulk(motor->gpio.lines,
-					    motor->gpio.disable_values);
+	int ret = gpiod_line_set_value_bulk(motor->info->lines,
+					    motor->info->disable_values);
 	if (ret < 0) {
 		perror("Failed to set pins to zeroes\n");
 	}
 
-	gpiod_line_release_bulk(motor->gpio.lines);
-	gpiod_chip_close(motor->gpio.chip);
-	free(motor->gpio.lines);
+	gpiod_line_release_bulk(motor->info->lines);
+	gpiod_chip_close(motor->info->chip);
+	free(motor->info->lines);
 	free(motor);
 }

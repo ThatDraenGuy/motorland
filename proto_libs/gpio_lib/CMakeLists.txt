@@ -53,4 +53,4 @@ target_include_directories(${PROJECT_NAME}
         PRIVATE ${LIBGPIOD_INCLUDE_DIRS}
         )
 
-target_link_libraries(${PROJECT_NAME} LINK_PRIVATE libgpiod common)
+target_link_libraries(${PROJECT_NAME} LINK_PRIVATE common libgpiod)
