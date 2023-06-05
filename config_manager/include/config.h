@@ -1,39 +1,72 @@
 #pragma once
 
-typedef struct {
-    char *motor_name;
-    int motor_type;
-    int steps_per_revolution;
-    int steps_per_minute;
-    special_motor_attributes attributes;
-} Config;
+#include <stdlib.h>
 
-typedef struct {
-    Config *config;
-    size_t motors_count;
-} ConfigWrapper;
-
-typedef union {
-    gpio_attributes gpio;
-    spi_attributes spi;
-    i2c_attributes i2c;
-} special_motor_attributes;
+typedef struct MotorAttributes MotorAttributes;
 
 typedef struct {
     int *pins;
-} gpio_attributes;
+    size_t pins_count;
+} GpioAttributes;
 
 typedef struct {
     int bus;
     int device;
     int mode;
     int max_speed_hz;
-} spi_attributes;
+} SpiAttributes;
 
 typedef struct {
     int bus;
     int address;
-} i2c_attributes;
+} I2cAttributes;
+
+typedef struct {
+    char *device_name;
+    int baud_rate;
+} UartAttributes;
+
+typedef union {
+    GpioAttributes gpio;
+    SpiAttributes spi;
+    I2cAttributes i2c;
+    UartAttributes uart;
+} SpecialMotorAttributes;
+
+typedef struct {
+    char *motor_name;
+    //int motor_type;
+    int steps_per_revolution;
+    int steps_rev_per_minute;
+} KeenMotorAttributes;
+
+/*typedef struct {
+    //int motor_type;
+    KeenMotorAttributes keen_attributes;
+    SpecialMotorAttributes special_attributes;
+} Config;*/
+
+typedef struct {
+    char *motor_name;
+    //int motor_type;
+    int steps_per_revolution;
+    int steps_rev_per_minute;
+
+    GpioAttributes gpio_attributes;
+    UartAttributes uart_attributes;
+
+} Config;
+
+
+typedef struct {
+    Config *configs;
+    size_t configs_count;
+} ConfigWrapper;
+
+typedef struct {
+    MotorAttributes *attributes;
+    size_t motors_count;
+} MotorsWrapper;
 
 /*typedef struct {
   char * motor_name;
