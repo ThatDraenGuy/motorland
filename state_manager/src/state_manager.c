@@ -1,4 +1,1 @@
-#include "state_manager.h"
-
-Result move_motors(StateManager *manager, MoveParams *params) {
-}
+#include "../include/state_manager.h"

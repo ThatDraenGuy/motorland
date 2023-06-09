@@ -1,13 +1,5 @@
-#include "protocol_manager.h"
+#include "../include/protocol_manager.h"
 
-Result blocking_move(ProtocolManager *manager, RotationCommandWrapper wrapper) {
-    for (size_t i = 0; i < wrapper.motors_count; ++i) {
-        Result result = wrapper.motor_attributes[i].rotate(wrapper->steps[i]);
-        if (result != SUCCESS) {
-            return result;
-        }
-    }
-    return SUCCESS;
+MovementResult gpio_manager_move(ProtocolManager *manager, MotorsMovements wrapper) {
+    // TODO: implement
 }
-
-//TODO: implement simultaneous movement
