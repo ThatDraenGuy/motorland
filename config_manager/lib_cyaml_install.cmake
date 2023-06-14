@@ -16,11 +16,6 @@ ExternalProject_Add(
         SOURCE_DIR ${LIBCYAML_ROOT}/src/libcyaml
         INSTALL_DIR ${LIBCYAML_ROOT}/bin
         CONFIGURE_COMMAND ""
-        #        --prefix=${LIBCYAML_ROOT}
-        #        --enable-tools=no
-        #        --enable-bindings-python=no
-        #        --host=${TARGET_HOST}
-        #        --target=${TARGET_HOST}
         BUILD_COMMAND ${MAKE} ARCH=arm CROSS_COMPILE=arm-openipc-linux-musleabi-
         BUILD_BYPRODUCTS ${LIBCYAML_LIB_DIR}/libcyaml.a
         INSTALL_COMMAND make PREFIX=${LIBCYAML_ROOT} install
