@@ -41,6 +41,10 @@ jobs:
         with:
           fetch-depth: 0 # OR "2" -> To retrieve the preceding commit.
 
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y automake autoconf libtool
+
       - name: Checkout firmware repo
         run: |
           git clone \
