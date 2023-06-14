@@ -41,6 +41,26 @@ jobs:
         with:
           fetch-depth: 0 # OR "2" -> To retrieve the preceding commit.
 
+      - name: Prepare general env
+        run: |
+          HEAD_TAG=$(git tag --points-at HEAD)
+          GIT_HASH=$(git rev-parse --short $GITHUB_SHA)
+          BRANCH_NAME=$(echo $GITHUB_REF | cut -d'/' -f 3)
+          if [ -z "$HEAD_TAG" ]; then
+            TAG_NAME="latest"
+            RELEASE_NAME="Development Build"
+            PRERELEASE=true
+          else
+            TAG_NAME=${{ github.ref }}
+            RELEASE_NAME="Release ${{ github.ref }}"
+            PRERELEASE=false
+          fi
+          echo "GIT_HASH=$GIT_HASH" >> $GITHUB_ENV
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+          echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
+          echo "PRERELEASE=$PRERELEASE" >> $GITHUB_ENV
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+
       - name: Install dependencies
         run: |
           sudo apt-get install -y automake autoconf libtool perl autoconf-archive
@@ -77,6 +97,13 @@ jobs:
           export ac_cv_func_malloc_0_nonnull=yes
           export ac_cv_func_realloc_0_nonnull=yes
           mkdir build
-          cd build
+          pushd build
           cmake ..
           make CROSS_COMPILE=${PREFIX}- CHIPARCH=${{ matrix.platform }}
+          popd
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: build/*
