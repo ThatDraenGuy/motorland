@@ -64,7 +64,13 @@ jobs:
             2>/dev/null
           tar xvf ${TOOLNAME}.tgz --strip-components=1 -C /tmp/extsdk >/dev/null
           echo "PREFIX=arm-openipc-linux-musleabi" >> $GITHUB_ENV
-          echo "PATH=/tmp/extsdk/bin:$PATH" >> $GITHUB_ENV
+          echo "PATH=$PATH:/tmp/extsdk/bin" >> $GITHUB_ENV
+          
+          echo "CC=arm-openipc-linux-musleabi-gcc" >> $GITHUB_ENV
+          echo "AR="arm-openipc-linux-musleabi-gcc-ar" >> $GITHUB_ENV
+          echo "HOST=arm-linux-musleabi" >> $GITHUB_ENV
+          echo "TOOLCHAIN=arm-openipc-linux-musleabi" >> $GITHUB_ENV
+          echo "RANLIB="arm-openipc-linux-musleabi-gcc-ranlib" >> $GITHUB_ENV
 
       - name: Build project
         run: |
