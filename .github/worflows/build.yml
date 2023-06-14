@@ -1,0 +1,70 @@
+# based on https://github.com/OpenIPC/openhisilicon/blob/main/.github/workflows/build.yml
+name: build
+
+on:
+  pull_request:
+    types:
+      - synchronize
+      - reopened
+      - opened
+    paths-ignore:
+      - "**.md"
+  push:
+    branches:
+      - "master"
+    tags:
+      - "v*"
+    paths-ignore:
+      - "**.md"
+  workflow_dispatch:
+
+env:
+  TAG_NAME: latest
+  REPO: OpenIPC/firmware
+
+jobs:
+  toolchain:
+    name: Build SDK
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: hi3516ev200
+            linux: 4.9.37
+            vendor: hisilicon
+
+    steps:
+      - name: Checkout main repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # OR "2" -> To retrieve the preceding commit.
+
+      - name: Checkout firmware repo
+        run: |
+          git clone \
+            --depth 1 --single-branch --branch=master \
+            https://github.com/${REPO} firmware
+
+      - name: Download toolchain
+        run: |
+          pushd firmware
+          BOARD=${{ matrix.platform }}_lite
+          make BOARD=${BOARD} prepare
+          TOOLNAME=$(make BOARD=${BOARD} toolname)
+          popd
+
+          mkdir /tmp/extsdk
+          wget https://github.com/${REPO}/releases/download/${TAG_NAME}/${TOOLNAME}.tgz \
+            2>/dev/null
+          tar xvf ${TOOLNAME}.tgz --strip-components=1 -C /tmp/extsdk >/dev/null
+          echo "PREFIX=arm-openipc-linux-musleabi" >> $GITHUB_ENV
+          echo "PATH=/tmp/extsdk/bin:$PATH" >> $GITHUB_ENV
+
+      - name: Build userspace libraries
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          make -G ninja CROSS_COMPILE=${PREFIX}- CHIPARCH=${{ matrix.platform }}
