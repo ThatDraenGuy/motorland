@@ -43,7 +43,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt-get install -y automake autoconf libtool
+          sudo apt-get install -y automake autoconf libtool perl
 
       - name: Checkout firmware repo
         run: |
