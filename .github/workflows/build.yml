@@ -31,7 +31,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: hi3516ev200
+          - platform: hi3516ev300
             linux: 4.9.37
             vendor: hisilicon
 
@@ -62,9 +62,9 @@ jobs:
           echo "PREFIX=arm-openipc-linux-musleabi" >> $GITHUB_ENV
           echo "PATH=/tmp/extsdk/bin:$PATH" >> $GITHUB_ENV
 
-      - name: Build userspace libraries
+      - name: Build project
         run: |
           mkdir build
           cd build
-          cmake ..
-          make -G ninja CROSS_COMPILE=${PREFIX}- CHIPARCH=${{ matrix.platform }}
+          cmake -G ninja ..
+          make CROSS_COMPILE=${PREFIX}- CHIPARCH=${{ matrix.platform }}
