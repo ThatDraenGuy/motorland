@@ -67,10 +67,10 @@ jobs:
           echo "PATH=$PATH:/tmp/extsdk/bin" >> $GITHUB_ENV
           
           echo "CC=arm-openipc-linux-musleabi-gcc" >> $GITHUB_ENV
-          echo "AR="arm-openipc-linux-musleabi-gcc-ar" >> $GITHUB_ENV
           echo "HOST=arm-linux-musleabi" >> $GITHUB_ENV
           echo "TOOLCHAIN=arm-openipc-linux-musleabi" >> $GITHUB_ENV
-          echo "RANLIB="arm-openipc-linux-musleabi-gcc-ranlib" >> $GITHUB_ENV
+          echo "AR=arm-openipc-linux-musleabi-gcc-ar" >> $GITHUB_ENV
+          echo "RANLIB=arm-openipc-linux-musleabi-gcc-ranlib" >> $GITHUB_ENV
 
       - name: Build project
         run: |
