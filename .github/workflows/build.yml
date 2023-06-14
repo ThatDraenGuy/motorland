@@ -2,20 +2,11 @@
 name: build
 
 on:
-  pull_request:
-    types:
-      - synchronize
-      - reopened
-      - opened
-    paths-ignore:
-      - "**.md"
   push:
     branches:
       - "master"
     tags:
       - "v*"
-    paths-ignore:
-      - "**.md"
   workflow_dispatch:
 
 env:
@@ -40,26 +31,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0 # OR "2" -> To retrieve the preceding commit.
-
-      - name: Prepare general env
-        run: |
-          HEAD_TAG=$(git tag --points-at HEAD)
-          GIT_HASH=$(git rev-parse --short $GITHUB_SHA)
-          BRANCH_NAME=$(echo $GITHUB_REF | cut -d'/' -f 3)
-          if [ -z "$HEAD_TAG" ]; then
-            TAG_NAME="latest"
-            RELEASE_NAME="Development Build"
-            PRERELEASE=true
-          else
-            TAG_NAME=${{ github.ref }}
-            RELEASE_NAME="Release ${{ github.ref }}"
-            PRERELEASE=false
-          fi
-          echo "GIT_HASH=$GIT_HASH" >> $GITHUB_ENV
-          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-          echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
-          echo "PRERELEASE=$PRERELEASE" >> $GITHUB_ENV
-          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: |
