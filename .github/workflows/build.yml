@@ -66,5 +66,5 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake -G ninja ..
+          cmake -G Ninja ..
           make CROSS_COMPILE=${PREFIX}- CHIPARCH=${{ matrix.platform }}
