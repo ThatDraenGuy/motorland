@@ -55,9 +55,14 @@ int config_parser_parse_config(char *filepath, ConfigWrapper **wrapper) {
     return cyaml_load_file(filepath, &config, &configs_schema, (void **) wrapper, NULL);
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+    	printf("Error: File path argument is required.\n");
+    	return 1;
+    }
+
+    char *filepath = argv[1];
     ConfigWrapper *wrapper;
-    char *filepath = "/home/viacheslav/CLionProjects/motorland_fork/config_manager/examples/example.yaml";
     int err = cyaml_load_file(filepath, &config, &configs_schema, (cyaml_data_t **) &wrapper, NULL);
 
     printf("Error: %d\n", err);
