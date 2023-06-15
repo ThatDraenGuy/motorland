@@ -1,0 +1,80 @@
+# based on https://github.com/OpenIPC/openhisilicon/blob/main/.github/workflows/build.yml
+name: build
+
+on:
+  push:
+    branches:
+      - "master"
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+env:
+  TAG_NAME: latest
+  REPO: OpenIPC/firmware
+
+jobs:
+  toolchain:
+    name: Build SDK
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: hi3516ev300
+            linux: 4.9.37
+            vendor: hisilicon
+
+    steps:
+      - name: Checkout main repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # OR "2" -> To retrieve the preceding commit.
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y automake autoconf libtool perl autoconf-archive
+
+      - name: Checkout firmware repo
+        run: |
+          git clone \
+            --depth 1 --single-branch --branch=master \
+            https://github.com/${REPO} firmware
+
+      - name: Download toolchain
+        run: |
+          pushd firmware
+          BOARD=${{ matrix.platform }}_lite
+          make BOARD=${BOARD} prepare
+          TOOLNAME=$(make BOARD=${BOARD} toolname)
+          popd
+
+          mkdir /tmp/extsdk
+          wget https://github.com/${REPO}/releases/download/${TAG_NAME}/${TOOLNAME}.tgz \
+            2>/dev/null
+          tar xvf ${TOOLNAME}.tgz --strip-components=1 -C /tmp/extsdk >/dev/null
+          echo "PREFIX=arm-openipc-linux-musleabi" >> $GITHUB_ENV
+          echo "PATH=$PATH:/tmp/extsdk/bin" >> $GITHUB_ENV
+          
+          echo "CC=arm-openipc-linux-musleabi-gcc" >> $GITHUB_ENV
+          echo "HOST=arm-linux-musleabi" >> $GITHUB_ENV
+          echo "TOOLCHAIN=arm-openipc-linux-musleabi" >> $GITHUB_ENV
+          echo "AR=arm-openipc-linux-musleabi-gcc-ar" >> $GITHUB_ENV
+          echo "RANLIB=arm-openipc-linux-musleabi-gcc-ranlib" >> $GITHUB_ENV
+
+      - name: Build project
+        run: |
+          export ac_cv_func_malloc_0_nonnull=yes
+          export ac_cv_func_realloc_0_nonnull=yes
+          mkdir build
+          pushd build
+          cmake ..
+          make CROSS_COMPILE=${PREFIX}- CHIPARCH=${{ matrix.platform }}
+          popd
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: build/bin/*
