@@ -4,8 +4,12 @@
 
 #define SOCKET_PATH "/tmp/motorsd_socket"
 
+int soc_fd;
+
 void signal_handler(int signum) {
     if (signum == SIGTERM) {
+        close(soc_fd);
+        unlink(SOCKET_PATH);
         printf("Received SIGTERM, shutting down.\n");
         exit(EXIT_SUCCESS);
     }
@@ -16,7 +20,7 @@ int main() {
     signal(SIGTERM, signal_handler);
 
     // Create a Unix socket
-    int soc_fd = socket(AF_UNIX, SOCK_STREAM, 0);
+    soc_fd = socket(AF_UNIX, SOCK_STREAM, 0);
     if (soc_fd < 0) {
         perror("Error creating socket");
         exit(EXIT_FAILURE);
@@ -71,10 +75,6 @@ int main() {
 
         close(client_fd);
     }
-
-    // Close the socket and remove the socket file
-    close(soc_fd);
-    unlink(SOCKET_PATH);
 
     return 0;
 }
