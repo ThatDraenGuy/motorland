@@ -4,13 +4,17 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
+#include <stdint.h>
+
 #define SOCKET_PATH "/tmp/motorsd_socket"
 
+const uint8_t stub_command[] = {0x00, 0x00, 0x0A, 0x05, 0xFF};
+
 int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        printf("Usage: %s <message>\n", argv[0]);
-        exit(EXIT_FAILURE);
-    }
+//    if (argc < 2) {
+//        printf("Usage: %s <message>\n", argv[0]);
+//        exit(EXIT_FAILURE);
+//    }
 
     // Create a Unix socket
     int sockFd = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -33,7 +37,8 @@ int main(int argc, char *argv[]) {
     }
 
     // Send the message to the server
-    ssize_t bytesSent = send(sockFd, argv[1], strlen(argv[1]), 0);
+//    ssize_t bytesSent = send(sockFd, argv[1], strlen(argv[1]), 0);
+    ssize_t bytesSent = send(sockFd, stub_command, sizeof(stub_command), 0);
     if (bytesSent < 0) {
         perror("Error sending message");
         close(sockFd);
