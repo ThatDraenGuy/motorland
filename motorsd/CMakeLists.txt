@@ -9,4 +9,4 @@ set(SOURCES src/daemon.c src/command_parser.c src/motor_invoker.c include/motor_
 set(TEST_SOURCES test/test.c)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
-add_executable(${PROJECT_NAME}connection_test ${TEST_SOURCES})
+add_executable(${PROJECT_NAME}_connection_test ${TEST_SOURCES})

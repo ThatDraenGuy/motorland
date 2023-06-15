@@ -65,7 +65,7 @@ int main() {
             exit(EXIT_FAILURE);
         }
 
-        MotorCommand command = parse_motor_command((const uint8_t *) &bytesRead, sizeof(buffer));
+        MotorCommand command = parse_motor_command((const uint8_t *) &buffer, sizeof(buffer));
 
         process_motor_command(command);
 
