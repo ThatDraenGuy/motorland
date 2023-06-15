@@ -20,7 +20,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: hi3516ev300
+          - platform: hi3518ev200
             linux: 4.9.37
             vendor: hisilicon
 
@@ -68,7 +68,7 @@ jobs:
           mkdir build
           pushd build
           cmake ..
-          make CROSS_COMPILE=${PREFIX}- CHIPARCH=${{ matrix.platform }}
+          make CROSS_COMPILE=${PREFIX}-
           popd
 
       - name: Release
