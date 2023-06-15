@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdlib.h>
-#include "../../proto_libs/gpio_lib/include/motor_internal.h"
+#include "motor_internal.h"
 
 typedef struct {
 	int *pins;
