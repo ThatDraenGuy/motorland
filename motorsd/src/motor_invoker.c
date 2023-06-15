@@ -2,8 +2,8 @@
 #include <string.h>
 
 // вот не подключается
-#include "../../proto_libs/gpio_lib/include/motor_api.h"
-#include "../../proto_libs/gpio_lib/include/motor_internal.h"
+#include "motor_api.h"
+#include "motor_internal.h"
 
 void process_motor_command(MotorCommand command) {
     printf("\nindex: %d\nspeed: %d\nsteps: %d\n", command.motorIndex, command.speed, command.numOfSteps);
