@@ -2,8 +2,8 @@
 #include "daemon_utils.h"
 #include "motor_invoker.h"
 
-#include "../../config_manager/include/config.h"
-#include "../../config_manager/include/config_parser.h"
+#include "config.h"
+#include "config_parser.h"
 
 #define SOCKET_PATH "/tmp/motorsd_socket"
 
