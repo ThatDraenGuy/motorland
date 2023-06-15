@@ -162,3 +162,4 @@ static void deactivate(struct MotorAttributes *motor)
 	}
 	free(motor->gpio.lines);
 	free(motor);
+}

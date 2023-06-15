@@ -1,4 +1,4 @@
-#include "../include/config_parser.h"
+#include "config_parser.h"
 #include <stdio.h>
 #include <cyaml/cyaml.h>
 
@@ -55,35 +55,26 @@ int config_parser_parse_config(char *filepath, ConfigWrapper **wrapper) {
     return cyaml_load_file(filepath, &config, &configs_schema, (void **) wrapper, NULL);
 }
 
-int main(int argc, char *argv[]) {
-    if (argc < 2) {
-    	printf("Error: File path argument is required.\n");
-    	return 1;
-    }
-
-    char *filepath = argv[1];
-    ConfigWrapper *wrapper;
-    int err = cyaml_load_file(filepath, &config, &configs_schema, (cyaml_data_t **) &wrapper, NULL);
-
+void config_parser_print_config(int err, ConfigWrapper *wrapper) {
     printf("Error: %d\n", err);
     printf("Motor count: %zu\n", wrapper->configs_count);
     for (size_t i = 0; i < wrapper->configs_count; ++i) {
-        Config conf = wrapper->configs[i];
-        printf("Motor %zu: %s\n", i + 1, conf.motor_name);
-        printf("steps_rev_per_minute: %d\n", conf.steps_rev_per_minute);
-        printf("steps_rev_per_minute: %d\n", conf.steps_rev_per_minute);
-        if (conf.gpio_attributes.pins_count) {
-            printf("pins: ");
-            for (size_t j = 0; j < conf.gpio_attributes.pins_count; ++j) {
-                printf("%d ", conf.gpio_attributes.pins[j]);
-            }
-            printf("\n");
-        }
-        if(conf.uart_attributes.device_name){
-            printf("device name: %s\n", conf.uart_attributes.device_name);
-            printf("baud rate: %d\n", conf.uart_attributes.baud_rate);
-        }
-        /*if (conf.gpio_attributes) {
+	    Config conf = wrapper->configs[i];
+	    printf("Motor %zu: %s\n", i + 1, conf.motor_name);
+	    printf("steps_rev_per_minute: %d\n", conf.steps_rev_per_minute);
+	    printf("steps_rev_per_minute: %d\n", conf.steps_rev_per_minute);
+	    if (conf.gpio_attributes.pins_count) {
+		    printf("pins: ");
+		    for (size_t j = 0; j < conf.gpio_attributes.pins_count; ++j) {
+			    printf("%d ", conf.gpio_attributes.pins[j]);
+		    }
+		    printf("\n");
+	    }
+	    if(conf.uart_attributes.device_name){
+		    printf("device name: %s\n", conf.uart_attributes.device_name);
+		    printf("baud rate: %d\n", conf.uart_attributes.baud_rate);
+	    }
+	    /*if (conf.gpio_attributes) {
             printf("pins: ");
             for (size_t j = 0; j < conf.gpio_attributes->pins_count; ++j) {
                 printf("%d ", conf.gpio_attributes->pins[j]);
@@ -95,5 +86,19 @@ int main(int argc, char *argv[]) {
             printf("baud rate: %d\n", conf.uart_attributes->baud_rate);
         }*/
     }
+}
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+    	printf("Error: File path argument is required.\n");
+    	return 1;
+    }
+
+    char *filepath = argv[1];
+    ConfigWrapper *wrapper;
+    int err = cyaml_load_file(filepath, &config, &configs_schema, (cyaml_data_t **) &wrapper, NULL);
+
+    config_parser_print_config(err, wrapper);
+
     //cyaml_free(&config, &configs_schema, &wrapper, 0);
 }
