@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - "master"
+      - "moleus/build/github-actions"
   workflow_dispatch:
 
 env:
@@ -20,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: hi3516ev300
+          - platform: hi3518ev200
             linux: 4.9.37
             vendor: hisilicon
 
@@ -58,6 +59,7 @@ jobs:
           echo "CC=arm-openipc-linux-musleabi-gcc" >> $GITHUB_ENV
           echo "HOST=arm-linux-musleabi" >> $GITHUB_ENV
           echo "TOOLCHAIN=arm-openipc-linux-musleabi" >> $GITHUB_ENV
+          echo "SYSROOT=/tmp/extsdk" >> $GITHUB_ENV
           echo "AR=arm-openipc-linux-musleabi-gcc-ar" >> $GITHUB_ENV
           echo "RANLIB=arm-openipc-linux-musleabi-gcc-ranlib" >> $GITHUB_ENV
 
@@ -68,7 +70,7 @@ jobs:
           mkdir build
           pushd build
           cmake ..
-          make CROSS_COMPILE=${PREFIX}- CHIPARCH=${{ matrix.platform }}
+          make CROSS_COMPILE=${PREFIX}-
           popd
 
       - name: Release
