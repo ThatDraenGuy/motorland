@@ -1,7 +1,7 @@
 #pragma "once"
 
-#include "../include/config_manager.h"
-#include "../include/config_parser.h"
+#include "config_manager.h"
+#include "config_parser.h"
 
 enum {
     FILE_OPEN_FAILED,
