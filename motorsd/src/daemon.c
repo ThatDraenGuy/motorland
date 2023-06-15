@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 	// Create a Unix socket
 	soc_fd = socket(AF_UNIX, SOCK_STREAM, 0);
 	if (soc_fd < 0) {
-		perror("Error creating socket");
+		perror("Error creating socket\n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -56,14 +56,14 @@ int main(int argc, char *argv[])
 	// Bind the socket to the specified address
 	if (bind(soc_fd, (struct sockaddr *)&addr, sizeof(struct sockaddr_un)) <
 	    0) {
-		perror("Error binding socket");
+		perror("Error binding socket\n");
 		close(soc_fd);
 		exit(EXIT_FAILURE);
 	}
 
 	// Listen for incoming connections
 	if (listen(soc_fd, 1) < 0) {
-		perror("Error trying to listen to socket");
+		perror("Error trying to listen to socket\n");
 		close(soc_fd);
 		exit(EXIT_FAILURE);
 	}
@@ -74,10 +74,10 @@ int main(int argc, char *argv[])
 	while (1) {
 		int client_fd = accept(soc_fd, NULL, NULL);
 
-		printf("Accepted request from socket");
+		printf("Accepted request from socket\n");
 
 		if (client_fd < 0) {
-			perror("Error accepting connection");
+			perror("Error accepting connection\n");
 			close(soc_fd);
 			exit(EXIT_FAILURE);
 		}
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 		char buffer[sizeof(MotorCommand)];
 		ssize_t bytesRead = recv(client_fd, buffer, sizeof(buffer), 0);
 		if (bytesRead < 0) {
-			perror("Error receiving message from socket");
+			perror("Error receiving message from socket\n");
 			close(client_fd);
 			close(soc_fd);
 			exit(EXIT_FAILURE);
