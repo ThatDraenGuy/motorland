@@ -5,7 +5,7 @@
 
 typedef struct {
     uint8_t motorIndex;
-    uint16_t numOfSteps;
+    int16_t numOfSteps;
     uint8_t speed;
     uint8_t checksum;
 } MotorCommand;

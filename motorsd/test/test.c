@@ -27,7 +27,6 @@ void connect_to_server() {
     perror("Error creating socket");
     exit(EXIT_FAILURE);
   }
-
   // Set up socket address structure
   struct sockaddr_un addr;
   memset(&addr, 0, sizeof(struct sockaddr_un));
@@ -42,51 +41,42 @@ void connect_to_server() {
   }
 }
 
+void close_connection() {
+  close(soc_fd);
+}
+
 void send_motor_command(MotorCommand command) {
+  connect_to_server();
   // Send the motor command
   ssize_t bytesSent = send(soc_fd, &command, sizeof(MotorCommand), 0);
+  close_connection();
   if (bytesSent < 0) {
     perror("Error sending motor command");
-    close(soc_fd);
     exit(EXIT_FAILURE);
   } else if (bytesSent != sizeof(MotorCommand)) {
     fprintf(stderr, "Incomplete transmission of motor command\n");
-    close(soc_fd);
     exit(EXIT_FAILURE);
   }
 }
 
-void move_camera(int16_t stepsX, int16_t stepsY, uint8_t speed) {
-  MotorCommand commandX, commandY;
-  commandX.motorIndex = 0;
-  commandX.numOfSteps = stepsX;
+void move_camera(uint8_t motor_index, int16_t steps, uint8_t speed) {
+  MotorCommand commandX;
+  commandX.motorIndex = motor_index;
+  commandX.numOfSteps = steps;
   commandX.speed = speed;
   commandX.checksum = 0xFF;
 
-  commandY.motorIndex = 1;
-  commandY.numOfSteps = stepsY;
-  commandY.speed = speed;
-  commandY.checksum = 0xFF;
-
   send_motor_command(commandX);
-  send_motor_command(commandY);
-}
-
-void close_connection() {
-  close(soc_fd);
 }
 
 int main() {
   // Register signal handler for graceful shutdown
   signal(SIGTERM, signal_handler);
 
-  // Connect to the server
-  connect_to_server();
-
   // Move the camera in a loop every 5 seconds
   while (1) {
     // Move camera left
-    move_camera(-500, 0, 10);
+    move_camera(1, 500, 10);
     sleep(1);
 
     // Move camera up
@@ -94,7 +84,7 @@ int main() {
     sleep(1);
 
     // Move camera right
-    move_camera(500, 0, 10);
+    move_camera(1, -500, 10);
     sleep(1);
 
     // Move camera down
