@@ -72,6 +72,7 @@ struct MotorAttributes *motor_setup(ConnectionAttributes connection,
 		struct gpiod_chip *chip = gpiod_chip_open(chip_path);
 		if (!chip) {
 			perror("Failed to open GPIO chip");
+			fprintf(stderr, "Path: %s\n", chip_path);
 			goto err;
 		}
 		motor->gpio.chips[i] = chip;
@@ -131,23 +132,30 @@ static void rotate(struct MotorAttributes *motor, int steps_to_move)
 
 static void step_motor(struct gpiod_line_bulk *lines, const int pin_values[4])
 {
-	int ret = gpiod_line_set_value_bulk(lines, pin_values);
-	if (ret < 0) {
-		perror("Failed to set bulk values");
-		return;
+	for (int i = 0; i < PINS_COUNT; ++i) {
+		struct gpiod_line *line = gpiod_line_bulk_get_line(lines, i);
+		int ret = gpiod_line_set_value(line, pin_values[i]);
+		if (ret < 0) {
+			perror("Failed to set gpio value to step");
+			return;
+		}
 	}
 }
 
 static void deactivate(struct MotorAttributes *motor)
 {
-	int ret = gpiod_line_set_value_bulk(motor->gpio.lines,
-					    motor->gpio.disable_values);
-	if (ret < 0) {
-		perror("Failed to set pins to zeroes\n");
+	for (int i = 0; i < PINS_COUNT; ++i) {
+		struct gpiod_line *line =
+			gpiod_line_bulk_get_line(motor->gpio.lines, i);
+		int ret = gpiod_line_set_value(line,
+					       motor->gpio.disable_values[i]);
+		if (ret < 0) {
+			perror("Failed to set pins to zeroes\n");
+		}
+		gpiod_line_release(line);
 	}
 
-	gpiod_line_release_bulk(motor->gpio.lines);
-	for (int i = 0; i < 2; ++i) {
+	for (int i = 0; i < PINS_COUNT; ++i) {
 		struct gpiod_chip *chip = motor->gpio.chips[i];
 		if (chip) {
 			gpiod_chip_close(chip);
