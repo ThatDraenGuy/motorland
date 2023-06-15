@@ -18,9 +18,8 @@
 // Define the delay between steps in microseconds
 
 struct GpioInfo {
-	struct gpiod_chip *chip;
+	struct gpiod_chip *chips[PINS_COUNT];
 	struct gpiod_line_bulk *lines;
-	unsigned int pin_offsets[PINS_COUNT];
 	int disable_values[PINS_COUNT];
 };
 
