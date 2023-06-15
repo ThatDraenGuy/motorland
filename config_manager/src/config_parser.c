@@ -51,7 +51,7 @@ static const cyaml_config_t config = {
         .log_level = CYAML_LOG_DEBUG, /* Logging errors and warnings only. */
 };
 
-int config_parser_parse_config(char *filepath, ConfigWrapper **wrapper) {
+cyaml_err_t config_parser_parse_config(char *filepath, ConfigWrapper **wrapper) {
     return cyaml_load_file(filepath, &config, &configs_schema, (void **) wrapper, NULL);
 }
 
@@ -79,21 +79,10 @@ int main(int argc, char *argv[]) {
             }
             printf("\n");
         }
-        if(conf.uart_attributes.device_name){
+        if (conf.uart_attributes.device_name) {
             printf("device name: %s\n", conf.uart_attributes.device_name);
             printf("baud rate: %d\n", conf.uart_attributes.baud_rate);
         }
-        /*if (conf.gpio_attributes) {
-            printf("pins: ");
-            for (size_t j = 0; j < conf.gpio_attributes->pins_count; ++j) {
-                printf("%d ", conf.gpio_attributes->pins[j]);
-            }
-            printf("\n");
-        }
-        if(conf.uart_attributes){
-            printf("device name: %s\n", conf.uart_attributes->device_name);
-            printf("baud rate: %d\n", conf.uart_attributes->baud_rate);
-        }*/
     }
-    //cyaml_free(&config, &configs_schema, &wrapper, 0);
+    cyaml_free(&config, &configs_schema, &wrapper, 0);
 }
