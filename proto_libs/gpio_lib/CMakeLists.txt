@@ -60,4 +60,6 @@ target_include_directories(${PROJECT_NAME}
         PRIVATE ${LIBGPIOD_INCLUDE_DIRS}
         )
 
+add_library(${PROJECT_NAME}_lib ${SOURCES} ${HEADERS})
+
 target_link_libraries(${PROJECT_NAME} PRIVATE libgpiod)

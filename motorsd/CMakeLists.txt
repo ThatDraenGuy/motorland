@@ -18,4 +18,4 @@ target_include_directories(${PROJECT_NAME}_connection_test
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         )
 
-target_link_libraries(${PROJECT_NAME} LINK_PRIVATE config_manager_lib)
+target_link_libraries(${PROJECT_NAME} LINK_PRIVATE config_manager_lib gpio_lib_lib)
