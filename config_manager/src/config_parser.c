@@ -1,4 +1,4 @@
-#include "../include/config_parser.h"
+#include "config_parser.h"
 #include <stdio.h>
 #include <cyaml/cyaml.h>
 
