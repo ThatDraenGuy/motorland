@@ -1,5 +1,27 @@
+cmake_minimum_required(VERSION 3.11)
+
 project(config_manager C)
 
-set(SOURCES src/config_manager.c)
+file(GLOB_RECURSE SOURCES "${CMAKE_CURRENT_LIST_DIR}/src/*.c")
+file(GLOB_RECURSE HEADERS "${CMAKE_CURRENT_LIST_DIR}/include/*.h")
+include_directories(include)
 
-add_executable(${PROJECT_NAME} ${SOURCES})
+include(lib_yaml_install.cmake)
+include(lib_cyaml_install.cmake)
+
+add_executable(${PROJECT_NAME} src/config_parser.c)
+
+target_sources(${PROJECT_NAME}
+        PRIVATE
+        ${SOURCES}
+        PUBLIC
+        ${HEADERS}
+        )
+
+target_include_directories(${PROJECT_NAME}
+        PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}
+        PRIVATE ${LIBYAML_INCLUDE_DIRS}
+        )
+
+target_link_libraries(${PROJECT_NAME} PRIVATE libcyaml libyaml)
