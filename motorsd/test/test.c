@@ -1,54 +1,94 @@
+#include "daemon_utils.h"
+#include <signal.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/un.h>
-
-#include <stdint.h>
+#include <unistd.h>
 
 #define SOCKET_PATH "/tmp/motorsd_socket"
 
-const uint8_t stub_command[] = {0x00, 0x00, 0x0A, 0x05, 0xFF};
+int soc_fd;
 
-int main(int argc, char *argv[]) {
-//    if (argc < 2) {
-//        printf("Usage: %s <message>\n", argv[0]);
-//        exit(EXIT_FAILURE);
-//    }
+void signal_handler(int signum) {
+  if (signum == SIGTERM) {
+    printf("Received SIGTERM, shutting down.\n");
+    close(soc_fd);
+    exit(EXIT_SUCCESS);
+  }
+}
 
-    // Create a Unix socket
-    int sockFd = socket(AF_UNIX, SOCK_STREAM, 0);
-    if (sockFd < 0) {
-        perror("Cannot create socket");
-        exit(EXIT_FAILURE);
-    }
+void connect_to_server() {
+  // Create a Unix socket
+  soc_fd = socket(AF_UNIX, SOCK_STREAM, 0);
+  if (soc_fd < 0) {
+    perror("Error creating socket");
+    exit(EXIT_FAILURE);
+  }
+  // Set up socket address structure
+  struct sockaddr_un addr;
+  memset(&addr, 0, sizeof(struct sockaddr_un));
+  addr.sun_family = AF_UNIX;
+  strncpy(addr.sun_path, SOCKET_PATH, sizeof(addr.sun_path) - 1);
 
-    // Set up socket address structure
-    struct sockaddr_un addr;
-    memset(&addr, 0, sizeof(struct sockaddr_un));
-    addr.sun_family = AF_UNIX;
-    strncpy(addr.sun_path, SOCKET_PATH, sizeof(addr.sun_path) - 1);
+  // Connect to the server
+  if (connect(soc_fd, (struct sockaddr *) &addr, sizeof(struct sockaddr_un)) < 0) {
+    perror("Error connecting to server");
+    close(soc_fd);
+    exit(EXIT_FAILURE);
+  }
+}
 
-    // Connect to the server
-    if (connect(sockFd, (struct sockaddr *)&addr, sizeof(struct sockaddr_un)) < 0) {
-        perror("Error connecting to socket");
-        close(sockFd);
-        exit(EXIT_FAILURE);
-    }
+void close_connection() {
+  close(soc_fd);
+}
 
-    // Send the message to the server
-//    ssize_t bytesSent = send(sockFd, argv[1], strlen(argv[1]), 0);
-    ssize_t bytesSent = send(sockFd, stub_command, sizeof(stub_command), 0);
-    if (bytesSent < 0) {
-        perror("Error sending message");
-        close(sockFd);
-        exit(EXIT_FAILURE);
-    }
+void send_motor_command(MotorCommand command) {
+  connect_to_server();
+  // Send the motor command
+  ssize_t bytesSent = send(soc_fd, &command, sizeof(MotorCommand), 0);
+  close_connection();
+  if (bytesSent < 0) {
+    perror("Error sending motor command");
+    exit(EXIT_FAILURE);
+  } else if (bytesSent != sizeof(MotorCommand)) {
+    fprintf(stderr, "Incomplete transmission of motor command\n");
+    exit(EXIT_FAILURE);
+  }
+}
 
-    printf("Message sent successfully!\n");
+void move_camera(uint8_t motor_index, int16_t steps, uint8_t speed) {
+  MotorCommand commandX;
+  commandX.motorIndex = motor_index;
+  commandX.numOfSteps = steps;
+  commandX.speed = speed;
+  commandX.checksum = 0xFF;
 
-    // Close the socket
-    close(sockFd);
+  send_motor_command(commandX);
+}
 
-    return 0;
+int main() {
+  // Register signal handler for graceful shutdown
+  signal(SIGTERM, signal_handler);
+
+  // Move the camera in a loop every 5 seconds
+  while (1) {
+    // Move camera left
+    move_camera(1, 500, 10);
+    sleep(1);
+
+    // Move camera up
+    move_camera(0, 500, 10);
+    sleep(1);
+
+    // Move camera right
+    move_camera(1, -500, 10);
+    sleep(1);
+
+    // Move camera down
+    move_camera(0, -500, 10);
+    sleep(1);
+  }
 }
