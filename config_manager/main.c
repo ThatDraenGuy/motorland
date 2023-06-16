@@ -11,6 +11,5 @@ int main(int argc, char *argv[])
 	char *filepath = argv[1];
 	ConfigWrapper *wrapper;
 	int err = config_parser_parse_config(filepath, &wrapper);
-	// TODO: implement print config
-	// config_parser_print_config(err, wrapper);
+	config_parser_print_config(err, wrapper);
 }

@@ -1,3 +1,4 @@
+
 #include "motor_internal.h"
 
 const int SEQUENCE_MASK = 7;
@@ -129,7 +130,6 @@ static void rotate(struct MotorAttributes *motor, int steps_to_move)
 		usleep(motor->step_delay);
 	}
 }
-
 static void step_motor(struct gpiod_line_bulk *lines, const int pin_values[4])
 {
 	for (int i = 0; i < PINS_COUNT; ++i) {
@@ -141,7 +141,6 @@ static void step_motor(struct gpiod_line_bulk *lines, const int pin_values[4])
 		}
 	}
 }
-
 static void deactivate(struct MotorAttributes *motor)
 {
 	for (int i = 0; i < PINS_COUNT; ++i) {

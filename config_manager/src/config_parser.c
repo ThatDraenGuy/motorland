@@ -22,6 +22,7 @@ static const cyaml_schema_field_t uart_special_fields_schema[] = {
 static const cyaml_schema_field_t config_fields_schema[] = {
 	CYAML_FIELD_STRING_PTR("name", CYAML_FLAG_POINTER, Config, motor_name,
 			       0, CYAML_UNLIMITED),
+	//CYAML_FIELD_STRING_PTR("type", CYAML_FLAG_POINTER, Config, motor_type, 0, CYAML_UNLIMITED),
 	CYAML_FIELD_INT("steps_per_revolution", CYAML_FLAG_DEFAULT, Config,
 			steps_per_revolution),
 	CYAML_FIELD_INT("steps_rev_per_minute", CYAML_FLAG_DEFAULT, Config,
@@ -56,8 +57,45 @@ static const cyaml_config_t config = {
 	.log_level = CYAML_LOG_DEBUG, /* Logging errors and warnings only. */
 };
 
-cyaml_err_t config_parser_parse_config(char *filepath, ConfigWrapper **wrapper)
+int config_parser_parse_config(char *filepath, ConfigWrapper **wrapper)
 {
 	return cyaml_load_file(filepath, &config, &configs_schema,
 			       (void **)wrapper, NULL);
+}
+
+void config_parser_print_config(int err, ConfigWrapper *wrapper)
+{
+	printf("Error: %d\n", err);
+	printf("Motor count: %zu\n", wrapper->configs_count);
+	for (size_t i = 0; i < wrapper->configs_count; ++i) {
+		Config conf = wrapper->configs[i];
+		printf("Motor %zu: %s\n", i + 1, conf.motor_name);
+		printf("steps_rev_per_minute: %d\n", conf.steps_rev_per_minute);
+		printf("steps_rev_per_minute: %d\n", conf.steps_rev_per_minute);
+		if (conf.gpio_attributes.pins_count) {
+			printf("pins: ");
+			for (size_t j = 0; j < conf.gpio_attributes.pins_count;
+			     ++j) {
+				printf("%d ", conf.gpio_attributes.pins[j]);
+			}
+			printf("\n");
+		}
+		if (conf.uart_attributes.device_name) {
+			printf("device name: %s\n",
+			       conf.uart_attributes.device_name);
+			printf("baud rate: %d\n",
+			       conf.uart_attributes.baud_rate);
+		}
+		/*if (conf.gpio_attributes) {
+            printf("pins: ");
+            for (size_t j = 0; j < conf.gpio_attributes->pins_count; ++j) {
+                printf("%d ", conf.gpio_attributes->pins[j]);
+            }
+            printf("\n");
+        }
+        if(conf.uart_attributes){
+            printf("device name: %s\n", conf.uart_attributes->device_name);
+            printf("baud rate: %d\n", conf.uart_attributes->baud_rate);
+        }*/
+	}
 }

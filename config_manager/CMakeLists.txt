@@ -24,10 +24,10 @@ target_include_directories(${PROJECT_NAME}
         PRIVATE ${LIBYAML_INCLUDE_DIRS}
         )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE libcyaml libyaml gpio_lib_lib)
+target_link_libraries(${PROJECT_NAME} PRIVATE libcyaml libyaml)
 
 # library
-add_library(${PROJECT_NAME}_lib ${SOURCES})
+add_library(${PROJECT_NAME}_lib ${SOURCES} ${HEADERS})
 
-target_link_libraries(${PROJECT_NAME}_lib PUBLIC libcyaml libyaml gpio_lib_lib)
+target_link_libraries(${PROJECT_NAME}_lib PUBLIC libcyaml libyaml)
 target_include_directories(${PROJECT_NAME}_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${LIBCYAML_INCLUDE_DIRS})
