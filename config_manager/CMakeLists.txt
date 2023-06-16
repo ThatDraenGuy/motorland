@@ -9,7 +9,7 @@ include_directories(include)
 include(lib_yaml_install.cmake)
 include(lib_cyaml_install.cmake)
 
-add_executable(${PROJECT_NAME} src/config_parser.c)
+add_executable(${PROJECT_NAME} main.c)
 
 target_sources(${PROJECT_NAME}
         PRIVATE
@@ -25,3 +25,9 @@ target_include_directories(${PROJECT_NAME}
         )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE libcyaml libyaml)
+
+# library
+add_library(${PROJECT_NAME}_lib ${SOURCES} ${HEADERS})
+
+target_link_libraries(${PROJECT_NAME}_lib PUBLIC libcyaml libyaml)
+target_include_directories(${PROJECT_NAME}_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${LIBCYAML_INCLUDE_DIRS})
