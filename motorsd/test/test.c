@@ -76,19 +76,19 @@ int main() {
   // Move the camera in a loop every 5 seconds
   while (1) {
     // Move camera left
-    move_camera(1, 500, 10);
+    move_camera(1, 500, 80);
     sleep(1);
 
     // Move camera up
-    move_camera(0, 500, 10);
+    move_camera(0, 500, 80);
     sleep(1);
 
     // Move camera right
-    move_camera(1, -500, 10);
+    move_camera(1, -500, 80);
     sleep(1);
 
     // Move camera down
-    move_camera(0, -500, 10);
+    move_camera(0, -500, 80);
     sleep(1);
   }
 }
