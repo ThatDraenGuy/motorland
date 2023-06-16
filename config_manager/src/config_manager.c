@@ -3,39 +3,43 @@
 #include "config_manager.h"
 #include "config_parser.h"
 
-enum {
-    FILE_OPEN_FAILED,
-    SUCCESS
-};
-
-int config_manager_init_from_file(char *path, MotorsWrapper *wrapper) {
-    // TODO: implementation
-    /*FILE *f = fopen(path, "r");
-    if (!f) {
-        return FILE_OPEN_FAILED;
-    }
-    ConfigWrapper config_wrapper = {0};
-    int parse_result = config_manager_parse_config(f, config_wrapper);
-    if (parse_result != SUCCESS) {
-        return parse_result;
-    }*/
-    return -1;
-    // TODO: init motors
+static MotorAttributes *config_to_attributes(Config config)
+{
+	if (config.gpio_attributes.pins &&
+	    config.gpio_attributes.pins_count == 4) {
+		GpioConnectionData data = { config.gpio_attributes.pins[0],
+					    config.gpio_attributes.pins[1],
+					    config.gpio_attributes.pins[2],
+					    config.gpio_attributes.pins[3] };
+		int steps_per_revolution = config.steps_per_revolution;
+		int32_t speed = 10;
+		ConnectionAttributes attributes = { .gpio = data };
+		return motor_setup(attributes, steps_per_revolution, speed);
+	}
+	return NULL;
 }
 
-/*ConfigWrapper temp_gpio_wrapper() {
-    GPIO_attributes attributes = {.pins = {2, 4, 3, 5}};
-    Config config = {
-            .motor_name="gpio-motor",
-            .motor_type=GPIO,
-            .steps_per_revolution=2038,
-            .steps_per_minute=10,
-            .attributes=attributes};
-    ConfigWrapper wrapper = {.config=config, .motors_count=1};
-    return config;
-}*/
+static void config_manager_init_motors(ConfigWrapper *config_wrapper,
+				       MotorsWrapper *motors_wrapper)
+{
+	motors_wrapper = malloc(sizeof(MotorsWrapper));
+	motors_wrapper->motors_count = config_wrapper->configs_count;
+	motors_wrapper->attributes =
+		malloc(sizeof(MotorAttributes) * motors_wrapper->motors_count);
+	for (size_t i = 0; i < motors_wrapper->motors_count; ++i) {
+		motors_wrapper->attributes[i] =
+			*config_to_attributes(config_wrapper->configs[i]);
+	}
+}
 
-int config_manager_parse_config(char *filepath, ConfigWrapper **config_wrapper) {
-    // TODO: implementation
-    return config_parser_parse_config(filepath, config_wrapper);
+InitResult config_manager_init_from_file(char *path,
+					 MotorsWrapper *motors_wrapper)
+{
+	ConfigWrapper *config_wrapper;
+	cyaml_err_t err = config_parser_parse_config(path, &config_wrapper);
+	if (err != CYAML_OK) {
+		return INIT_FAIL;
+	}
+	config_manager_init_motors(config_wrapper, motors_wrapper);
+	return INIT_SUCCESS;
 }
